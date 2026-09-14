@@ -275,7 +275,10 @@
     </div>
 
     <script>
+        // Game colors in order
         const colors = ['red', 'blue', 'yellow', 'green'];
+
+        // Color hex values for reference
         const colorMap = {
             red: '#ff6b6b',
             blue: '#4ecdc4',
@@ -283,14 +286,16 @@
             green: '#95e1d3'
         };
 
-        let sequence = [];
-        let playerSequence = [];
-        let level = 1;
-        let score = 0;
-        let isPlayingSequence = false;
-        let gameActive = false;
-        let difficulty = 'normal';
+        // Game state variables
+        let sequence = [];           // The sequence Simon shows
+        let playerSequence = [];     // The sequence player has repeated
+        let level = 1;               // Current game level
+        let score = 0;               // Player score (level * 10)
+        let isPlayingSequence = false; // Is Simon currently showing the sequence?
+        let gameActive = false;      // Is a game in progress?
+        let difficulty = 'normal';   // Current difficulty setting
 
+        // Timing delays (in ms) for each difficulty level
         const delayMap = {
             easy: { play: 800, wait: 1200 },
             normal: { play: 600, wait: 1000 },
