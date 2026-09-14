@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Саймон Говорит</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.95em;
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+            aspect-ratio: 1;
+        }
+
+        .color-button {
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 1.2em;
+            font-weight: bold;
+            transition: all 0.2s ease;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .color-button:active,
+        .color-button.active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .red {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%);
+            color: white;
+        }
+
+        .red:hover {
+            background: linear-gradient(135deg, #ff5252 0%, #ff3333 100%);
+        }
+
+        .blue {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a3a8 100%);
+            color: white;
+        }
+
+        .blue:hover {
+            background: linear-gradient(135deg, #44a3a8 0%, #3a8a8a 100%);
+        }
+
+        .yellow {
+            background: linear-gradient(135deg, #ffe66d 0%, #ffd700 100%);
+            color: #333;
+        }
+
+        .yellow:hover {
+            background: linear-gradient(135deg, #ffd700 0%, #ffcc00 100%);
+        }
+
+        .green {
+            background: linear-gradient(135deg, #95e1d3 0%, #38ada9 100%);
+            color: white;
+        }
+
+        .green:hover {
+            background: linear-gradient(135deg, #38ada9 0%, #2d8e87 100%);
+        }
+
+        .info-panel {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .info-item {
+            padding: 10px;
+        }
+
+        .info-label {
+            color: #999;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            color: #667eea;
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .difficulty-select {
+            padding: 10px 15px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 0.95em;
+            background: white;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .difficulty-select:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            grid-column: 1;
+        }
+
+        .start-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .start-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .reset-btn {
+            background: #ff6b6b;
+            color: white;
+            grid-column: 2;
+        }
+
+        .reset-btn:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        .status {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #667eea;
+            height: 30px;
+            margin-bottom: 10px;
+        }
+
+        .game-over {
+            color: #ff6b6b;
+        }
+
+        .waiting {
+            color: #ffd700;
+        }
+
+        .playing {
+            color: #38ada9;
+        }
+
+        .color-button:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+                width: 95%;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .game-board {
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Саймон Говорит</h1>
+        <p class="subtitle">Повторяй последовательность цветов</p>
+
+        <div class="info-panel">
+            <div class="info-item">
+                <div class="info-label">Уровень</div>
+                <div class="info-value" id="level">1</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Очки</div>
+                <div class="info-value" id="score">0</div>
+            </div>
+        </div>
+
+        <div class="status" id="status">Нажми "Старт"</div>
+
+        <div class="controls">
+            <select class="difficulty-select" id="difficulty">
+                <option value="easy">🟢 Легко</option>
+                <option value="normal" selected>🟡 Нормально</option>
+                <option value="hard">🔴 Сложно</option>
+            </select>
+            <button class="start-btn" id="startBtn">Старт</button>
+        </div>
+
+        <button class="reset-btn" id="resetBtn">Сброс</button>
+
+        <div class="game-board">
+            <button class="color-button red" id="red">🔴</button>
+            <button class="color-button blue" id="blue">🔵</button>
+            <button class="color-button yellow" id="yellow">🟡</button>
+            <button class="color-button green" id="green">🟢</button>
+        </div>
+    </div>
+
+    <script>
+        const colors = ['red', 'blue', 'yellow', 'green'];
+        const colorMap = {
+            red: '#ff6b6b',
+            blue: '#4ecdc4',
+            yellow: '#ffe66d',
+            green: '#95e1d3'
+        };
+
+        let sequence = [];
+        let playerSequence = [];
+        let level = 1;
+        let score = 0;
+        let isPlayingSequence = false;
+        let gameActive = false;
+        let difficulty = 'normal';
+
+        const delayMap = {
+            easy: { play: 800, wait: 1200 },
+            normal: { play: 600, wait: 1000 },
+            hard: { play: 400, wait: 600 }
+        };
+
+        const buttons = {
+            red: document.getElementById('red'),
+            blue: document.getElementById('blue'),
+            yellow: document.getElementById('yellow'),
+            green: document.getElementById('green')
+        };
+
+        const startBtn = document.getElementById('startBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const statusDiv = document.getElementById('status');
+        const levelDiv = document.getElementById('level');
+        const scoreDiv = document.getElementById('score');
+        const difficultySelect = document.getElementById('difficulty');
+
+        // Звуки
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(color, duration = 150) {
+            const freq = {
+                red: 261.63,
+                blue: 392.00,
+                yellow: 523.25,
+                green: 659.25
+            };
+
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+
+            osc.connect(gain);
+            gain.connect(audioContext.destination);
+
+            osc.frequency.value = freq[color];
+            osc.type = 'sine';
+
+            gain.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration / 1000);
+
+            osc.start(audioContext.currentTime);
+            osc.stop(audioContext.currentTime + duration / 1000);
+        }
+
+        function flashButton(color) {
+            const btn = buttons[color];
+            btn.classList.add('active');
+            playSound(color);
+            setTimeout(() => {
+                btn.classList.remove('active');
+            }, 150);
+        }
+
+        function playSequence() {
+            isPlayingSequence = true;
+            const delay = delayMap[difficulty];
+
+            sequence.forEach((color, index) => {
+                setTimeout(() => {
+                    flashButton(color);
+                }, (index + 1) * delay.play);
+            });
+
+            setTimeout(() => {
+                isPlayingSequence = false;
+                enableButtons();
+                statusDiv.textContent = 'Твой ход!';
+                statusDiv.className = 'status playing';
+                playerSequence = [];
+            }, (sequence.length + 1) * delay.play);
+        }
+
+        function addToSequence() {
+            const randomColor = colors[Math.floor(Math.random() * 4)];
+            sequence.push(randomColor);
+            level = sequence.length;
+            score = (level - 1) * 10;
+            updateDisplay();
+            playSequence();
+        }
+
+        function updateDisplay() {
+            levelDiv.textContent = level;
+            scoreDiv.textContent = score;
+        }
+
+        function disableButtons() {
+            colors.forEach(color => {
+                buttons[color].disabled = true;
+            });
+        }
+
+        function enableButtons() {
+            colors.forEach(color => {
+                buttons[color].disabled = false;
+            });
+        }
+
+        function startGame() {
+            sequence = [];
+            playerSequence = [];
+            level = 1;
+            score = 0;
+            gameActive = true;
+            difficulty = difficultySelect.value;
+            updateDisplay();
+            startBtn.disabled = true;
+            statusDiv.textContent = 'Смотри...';
+            statusDiv.className = 'status waiting';
+            disableButtons();
+
+            setTimeout(() => {
+                addToSequence();
+            }, 1000);
+        }
+
+        function resetGame() {
+            sequence = [];
+            playerSequence = [];
+            level = 1;
+            score = 0;
+            gameActive = false;
+            isPlayingSequence = false;
+            updateDisplay();
+            startBtn.disabled = false;
+            statusDiv.textContent = 'Нажми "Старт"';
+            statusDiv.className = 'status';
+            disableButtons();
+        }
+
+        function checkPlayerMove(color) {
+            if (!gameActive || isPlayingSequence) return;
+
+            playerSequence.push(color);
+            flashButton(color);
+
+            // Проверяем правильность
+            if (playerSequence[playerSequence.length - 1] !== sequence[playerSequence.length - 1]) {
+                statusDiv.textContent = `Ошибка! Твой уровень: ${level}`;
+                statusDiv.className = 'status game-over';
+                gameActive = false;
+                startBtn.disabled = false;
+                disableButtons();
+                return;
+            }
+
+            // Если последовательность совпадает полностью
+            if (playerSequence.length === sequence.length) {
+                disableButtons();
+                statusDiv.textContent = 'Правильно! Далее...';
+                statusDiv.className = 'status playing';
+                gameActive = false;
+
+                setTimeout(() => {
+                    gameActive = true;
+                    addToSequence();
+                }, 1000);
+            }
+        }
+
+        // Event Listeners
+        startBtn.addEventListener('click', startGame);
+        resetBtn.addEventListener('click', resetGame);
+
+        colors.forEach(color => {
+            buttons[color].addEventListener('click', () => {
+                checkPlayerMove(color);
+            });
+        });
+
+        // Инициализация
+        resetGame();
+    </script>
+</body>
+</html>
